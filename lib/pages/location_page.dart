@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -6,12 +8,13 @@ class LocationPage extends StatefulWidget {
   const LocationPage({Key? key}) : super(key: key);
 
   @override
-  State<LocationPage> createState() => _LocationPageState();
+  State<LocationPage> createState() => _LocationWidgetState();
 }
 
-class _LocationPageState extends State<LocationPage> {
+class _LocationWidgetState extends State<LocationPage> {
   String? _currentAddress;
   Position? _currentPosition;
+  Timer? _locationTimer;
 
   Future<bool> _handleLocationPermission() async {
     bool serviceEnabled;
@@ -46,10 +49,16 @@ class _LocationPageState extends State<LocationPage> {
     final hasPermission = await _handleLocationPermission();
 
     if (!hasPermission) return;
+
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
         .then((Position position) {
       setState(() => _currentPosition = position);
       _getAddressFromLatLng(_currentPosition!);
+      _sendLocationToServer(_currentPosition!, _currentAddress);
+      // Start the timer to get location updates every 5 seconds
+      _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+        _getCurrentPosition();
+      });
     }).catchError((e) {
       debugPrint(e);
     });
@@ -69,6 +78,32 @@ class _LocationPageState extends State<LocationPage> {
     });
   }
 
+  Future<void> _sendLocationToServer(Position position, String? address) async {
+    String baseUrl = "http://10.11.2.184:3000/";
+    final response = await http.post(
+      Uri.parse(baseUrl + "location"),
+      body: {
+        'latitude': position.latitude.toString(),
+        'longitude': position.longitude.toString(),
+        'address': address ?? '',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Location sent successfully');
+    } else {
+      print('Failed to send location. Status code: ${response.statusCode}');
+    }
+  }
+
+  void _stopLocationUpdates() {
+    // Stop the location updates when the "Stop" button is pressed
+    if (_locationTimer != null) {
+      _locationTimer!.cancel();
+      _locationTimer = null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +121,12 @@ class _LocationPageState extends State<LocationPage> {
               ElevatedButton(
                 onPressed: _getCurrentPosition,
                 child: const Text("Get Current Location"),
-              )
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _stopLocationUpdates,
+                child: const Text("Stop"),
+              ),
             ],
           ),
         ),

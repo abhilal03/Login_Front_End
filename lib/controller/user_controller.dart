@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tourism/pages/home.dart';
@@ -8,7 +6,7 @@ import 'package:tourism/pages/login_page.dart';
 import 'package:tourism/widgets/custom_alerts.dart';
 
 class UserProvider extends ChangeNotifier {
-  String baseUrl = "http://10.11.3.85:3000/";
+  String baseUrl = "http://10.11.2.184:3000/";
   bool isUserRegistering = false;
   Future<void> userRegistration(
       {required String email,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tourism/controller/user_controller.dart';
-
 import 'package:tourism/pages/login_page.dart';
+
 
 void main() async {
   runApp(
@@ -27,10 +27,10 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Tourism Guide',
-      home: const LoginPage(),
+      home: LoginPage(),
     );
   }
 }

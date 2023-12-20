@@ -186,12 +186,12 @@ class _LoginPageState extends State<LoginPage> {
                                           context: context,
                                           email: _emailController.text,
                                           password: _passwordController.text);
-                                  //  Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //       builder: (context) =>
-                                  //           const HomePage(),),
-                                  // );
+                                   Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomePage(),),
+                                  );
                                   print('login');
                                 }
                               }
