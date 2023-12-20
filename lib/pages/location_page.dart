@@ -56,7 +56,7 @@ class _LocationWidgetState extends State<LocationPage> {
       _getAddressFromLatLng(_currentPosition!);
       _sendLocationToServer(_currentPosition!, _currentAddress);
       // Start the timer to get location updates every 5 seconds
-      _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      _locationTimer = Timer.periodic(const Duration(seconds: 8), (timer) {
         _getCurrentPosition();
       });
     }).catchError((e) {
