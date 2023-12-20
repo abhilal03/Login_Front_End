@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tourism/pages/location_page.dart';
+// import 'package:tourism/pages/map.dart';
 import 'package:tourism/pages/status.dart';
 import 'package:tourism/pallete.dart';
 
@@ -25,8 +27,8 @@ List<Step> stepList() => [
               children: [
                
 		           StatusPage(),
-	
-               Icon(Icons.location_pin),
+                LocationPage(),
+         
                Icon(Icons.settings),
               
               ],

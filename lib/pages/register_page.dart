@@ -1,12 +1,11 @@
-// import 'package:firebase_auth/firebase_auth.dart';
-import 'package:tourism/controller/auth_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:tourism/controller/user_controller.dart';
-import 'package:tourism/model/app_user.dart';
 import 'package:tourism/pages/login_page.dart';
 import 'package:tourism/widgets/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tourism/pallete.dart';
+
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
 
@@ -24,39 +23,20 @@ class _RegisterPageState extends State<RegisterPage> {
     "", //password
     "", //confirmPassword
   ];
-
+  // final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final _firstnamekey = GlobalKey<FormState>();
   final _lastNamekey = GlobalKey<FormState>();
   final _emailKey = GlobalKey<FormState>();
   final _passwordKey = GlobalKey<FormState>();
   final _confirmPasswordKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController  _emailController = TextEditingController();
-  final TextEditingController  _passwordController = TextEditingController();
-  final TextEditingController  _confirmpasswordController = TextEditingController();
-   final TextEditingController _lastController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmpasswordController =
+      TextEditingController();
+  final TextEditingController _lastController = TextEditingController();
   //TextEditingController  _addressController = TextEditingController();
-regis() async{
- try {
-   AuthController auth =AuthController();
-   final createRusult = await auth.createUserWithEmailAndPasswords(
-    email: _emailController.text, password: _passwordController.text
-    );
-if (createRusult == 'ok') {
-  AppUser newUser=AppUser(
-    uid: auth.currentUser!.uid,
-    email: _emailController.text,
-    name: _nameController.text,
-    lastName: _lastController.text,
-   
-  );
-  String addDataToDbRes= await UserController.createUser(newUser);
-  print('created');
-}
- } catch (e) {
-   return null;
- }
-  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -76,112 +56,108 @@ if (createRusult == 'ok') {
                 SingleChildScrollView(
                   child: Column(
                     children: [
-                      
-                       Image.asset('assets/images/logo.png',width: 200,height: 100,),
+                      Image.asset(
+                        'assets/images/logo.png',
+                        width: 200,
+                        height: 100,
+                      ),
                       Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Sign ',
-                              style: GoogleFonts.poppins(
-                                color: isDarkMode ? Colors.white : Colors.black,
-                                fontSize: size.height * 0.06,
-                                fontWeight: FontWeight.bold,
-                              ),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Sign ',
+                            style: GoogleFonts.poppins(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                              fontSize: size.height * 0.06,
+                              fontWeight: FontWeight.bold,
                             ),
-                            Text(
-                              'up',
-                              style: GoogleFonts.poppins(
-                                color: Pallete.green,
-                                fontSize: size.height * 0.06,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          ),
+                          Text(
+                            'up',
+                            style: GoogleFonts.poppins(
+                              color: Pallete.green,
+                              fontSize: size.height * 0.06,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-                          
+                          ),
+                        ],
+                      ),
                       Padding(
                         padding: EdgeInsets.only(top: size.height * 0.015),
                         child: Align(
                           child: Text(
-                                  'Create an Account',
-                                  style: GoogleFonts.poppins(
-                                    color: isDarkMode
-                                        ? Colors.white
-                                        : const Color(0xff1D1617),
-                                    fontSize: size.height * 0.025,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                            'Create an Account',
+                            style: GoogleFonts.poppins(
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : const Color(0xff1D1617),
+                              fontSize: size.height * 0.025,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: size.height * 0.01),
                       ),
-                    
-                           buildTextField(
-                              "First Name",
-                            
-                              Icons.person_outlined,
-                              false,
+                      buildTextField(
+                        "First Name",
+                        Icons.person_outlined,
+                        false,
+                        size,
+                        (valuename) {
+                          if (valuename.length <= 2) {
+                            buildSnackError(
+                              'Invalid Name',
+                              context,
                               size,
-                              (valuename) {
-                                if (valuename.length <= 2) {
-                                  buildSnackError(
-                                    'Invalid Name',
-                                    context,
-                                    size,
-                                  );
-                                  return '';
-                                }
-                                if (!RegExp(
-                                    r"^[a-zA-Z]")
-                                .hasMatch(valuename)) {
-                              buildSnackError(
-                                'Invalid Name',
-                                context,
-                                size,
-                              );
-                              return '';
-                            }
-                                return null;
-                              },
-                              _firstnamekey,
-                              0,
-                              _nameController,
-                              isDarkMode,
-                            ),
-                     buildTextField(
-                              "Last Name",
-                              Icons.person_outlined,
-                              false,
+                            );
+                            return '';
+                          }
+                          if (!RegExp(r"^[a-zA-Z]").hasMatch(valuename)) {
+                            buildSnackError(
+                              'Invalid Name',
+                              context,
                               size,
-                              (valuesurname) {
-                                if (valuesurname.length <= 2) {
-                                  buildSnackError(
-                                    'Invalid last name',
-                                    context,
-                                    size,
-                                  );
-                                  return '';
-                                }
-                                if (!RegExp(
-                                    r"^[a-zA-Z]")
-                                .hasMatch(valuesurname)) {
-                              buildSnackError(
-                                'Invalid last name',
-                                context,
-                                size,
-                              );
-                              return '';
-                            }
-                                return null;
-                              },
-                              _lastNamekey,
-                              1,
-                              _lastController,
-                              isDarkMode,
-                            ),
+                            );
+                            return '';
+                          }
+                          return null;
+                        },
+                        _firstnamekey,
+                        0,
+                        _nameController,
+                        isDarkMode,
+                      ),
+                      buildTextField(
+                        "Last Name",
+                        Icons.person_outlined,
+                        false,
+                        size,
+                        (valuesurname) {
+                          if (valuesurname.length <= 2) {
+                            buildSnackError(
+                              'Invalid last name',
+                              context,
+                              size,
+                            );
+                            return '';
+                          }
+                          if (!RegExp(r"^[a-zA-Z]").hasMatch(valuesurname)) {
+                            buildSnackError(
+                              'Invalid last name',
+                              context,
+                              size,
+                            );
+                            return '';
+                          }
+                          return null;
+                        },
+                        _lastNamekey,
+                        1,
+                        _lastController,
+                        isDarkMode,
+                      ),
                       Form(
                         child: buildTextField(
                           "Email",
@@ -240,27 +216,26 @@ if (createRusult == 'ok') {
                       ),
                       Form(
                         child: buildTextField(
-                                "Confirm Passsword",
-                                Icons.lock_outline,
-                                true,
+                          "Confirm Passsword",
+                          Icons.lock_outline,
+                          true,
+                          size,
+                          (valuepassword) {
+                            if (valuepassword != textfieldsStrings[3]) {
+                              buildSnackError(
+                                'Passwords must match',
+                                context,
                                 size,
-                                (valuepassword) {
-                                  if (valuepassword != textfieldsStrings[3]) {
-                                    buildSnackError(
-                                      'Passwords must match',
-                                      context,
-                                      size,
-                                    );
-                                    return '';
-                                  }
-                                  return null;
-                                },
-                                _confirmPasswordKey,
-                                4,
-                                _confirmpasswordController,
-                                isDarkMode,
-
-                              ),
+                              );
+                              return '';
+                            }
+                            return null;
+                          },
+                          _confirmPasswordKey,
+                          4,
+                          _confirmpasswordController,
+                          isDarkMode,
+                        ),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
@@ -268,93 +243,87 @@ if (createRusult == 'ok') {
                           vertical: size.height * 0.01,
                         ),
                         child: CheckboxListTile(
-                          
-                                title: RichText(
-                                 
-                                  textAlign: TextAlign.left,
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text:
-                                            "By creating an account, you agree to our ",
-                                        style: TextStyle(
-                                          color: const Color(0xffADA4A5),
-                                          fontSize: size.height * 0.015,
-                                        ),
-                                      ),
-                                      WidgetSpan(
-                                        child: InkWell(
-                                          onTap: () {
-                                            // ignore: avoid_print
-                                            print('Conditions of Use');
-                                          },
-                                          child: Text(
-                                            "Conditions of Use",
-                                            style: TextStyle(
-                                              color: const Color(0xffADA4A5),
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              fontSize: size.height * 0.015,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: " and ",
-                                        style: TextStyle(
-                                          color: const Color(0xffADA4A5),
-                                          fontSize: size.height * 0.015,
-                                        ),
-                                      ),
-                                      WidgetSpan(
-                                        child: InkWell(
-                                          onTap: () {
-                                            // ignore: avoid_print
-                                            print('Privacy Notice');
-                                          },
-                                          child: Text(
-                                            "Privacy Notice",
-                                            style: TextStyle(
-                                              color: const Color(0xffADA4A5),
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              fontSize: size.height * 0.015,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                          title: RichText(
+                            textAlign: TextAlign.left,
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text:
+                                      "By creating an account, you agree to our ",
+                                  style: TextStyle(
+                                    color: const Color(0xffADA4A5),
+                                    fontSize: size.height * 0.015,
                                   ),
                                 ),
-                                activeColor: Pallete.green,
-                                value: checkedValue,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    checkedValue = newValue!;
-                                  });
-                                },
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                              ),
-                            
+                                WidgetSpan(
+                                  child: InkWell(
+                                    onTap: () {
+                                      // ignore: avoid_print
+                                      print('Conditions of Use');
+                                    },
+                                    child: Text(
+                                      "Conditions of Use",
+                                      style: TextStyle(
+                                        color: const Color(0xffADA4A5),
+                                        decoration: TextDecoration.underline,
+                                        fontSize: size.height * 0.015,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: " and ",
+                                  style: TextStyle(
+                                    color: const Color(0xffADA4A5),
+                                    fontSize: size.height * 0.015,
+                                  ),
+                                ),
+                                WidgetSpan(
+                                  child: InkWell(
+                                    onTap: () {
+                                      // ignore: avoid_print
+                                      print('Privacy Notice');
+                                    },
+                                    child: Text(
+                                      "Privacy Notice",
+                                      style: TextStyle(
+                                        color: const Color(0xffADA4A5),
+                                        decoration: TextDecoration.underline,
+                                        fontSize: size.height * 0.015,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          activeColor: Pallete.green,
+                          value: checkedValue,
+                          onChanged: (newValue) {
+                            setState(() {
+                              checkedValue = newValue!;
+                            });
+                          },
+                          controlAffinity: ListTileControlAffinity.leading,
+                        ),
                       ),
                       AnimatedPadding(
                         duration: const Duration(milliseconds: 500),
                         padding: EdgeInsets.only(top: size.height * 0.015),
                         child: ButtonWidget(
-                          text:  "Register",
-                          backColor: isDarkMode
-                              ? [
-                                  Colors.black,
-                                  Colors.black,
-                                ]
-                              : const [Pallete.green, Pallete.green],
-                          textColor: const [
-                            Colors.white,
-                            Colors.white,
-                          ],
-                          onPressed: () async {
-                           if (_firstnamekey.currentState!.validate()) {
+                            text: "Register",
+                            backColor: isDarkMode
+                                ? [
+                                    Colors.black,
+                                    Colors.black,
+                                  ]
+                                : const [Pallete.green, Pallete.green],
+                            textColor: const [
+                              Colors.white,
+                              Colors.white,
+                            ],
+                            onPressed: () async {
+                              if (_firstnamekey.currentState!.validate()) {
                                 if (_lastNamekey.currentState!.validate()) {
                                   if (_emailKey.currentState!.validate()) {
                                     print(_emailKey.toString());
@@ -362,30 +331,28 @@ if (createRusult == 'ok') {
                                       if (_confirmPasswordKey.currentState!
                                           .validate()) {
                                         if (checkedValue == false) {
-                                          regis();
                                           buildSnackError(
                                               'Accept our Privacy Policy and Term Of Use',
                                               context,
                                               size);
                                         } else {
-                                          regis();
-                                          Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const   LoginPage(),),
-                                  );
-                                          print('register edcs');
+                                          Provider.of<UserProvider>(context,
+                                                  listen: false)
+                                              .userRegistration(
+                                            email: _emailController.text,
+                                            name: _nameController.text,
+                                            lastName: _lastController.text,
+                                            password: _passwordController.text,
+                                            context: context
+                                          );
+                                   
                                         }
                                       }
                                     }
                                   }
                                 }
                               }
-                             
-                            }
-                          
-                        ),
+                            }),
                       ),
                       
                       Padding(
@@ -395,7 +362,7 @@ if (createRusult == 'ok') {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text:"Already have an account? ",
+                                text: "Already have an account? ",
                                 style: TextStyle(
                                   color: isDarkMode
                                       ? Colors.white
@@ -407,31 +374,32 @@ if (createRusult == 'ok') {
                                 child: InkWell(
                                   onTap: () => setState(() {
                                     Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                       builder: (context) =>
-                                          const LoginPage(),),);
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const LoginPage(),
+                                      ),
+                                    );
                                   }),
                                   child: Text(
-                                          "Login",
-                                          style: TextStyle(
-                                            foreground: Paint()
-                                              ..shader = const LinearGradient(
-                                                colors: <Color>[
-                                                  Color(0xffEEA4CE),
-                                                  Color(0xffC58BF2),
-                                                ],
-                                              ).createShader(
-                                                const Rect.fromLTWH(
-                                                  0.0,
-                                                  0.0,
-                                                  200.0,
-                                                  70.0,
-                                                ),
-                                              ),
-                                            fontSize: size.height * 0.018,
+                                    "Login",
+                                    style: TextStyle(
+                                      foreground: Paint()
+                                        ..shader = const LinearGradient(
+                                          colors: <Color>[
+                                            Color(0xffEEA4CE),
+                                            Color(0xffC58BF2),
+                                          ],
+                                        ).createShader(
+                                          const Rect.fromLTWH(
+                                            0.0,
+                                            0.0,
+                                            200.0,
+                                            70.0,
                                           ),
                                         ),
+                                      fontSize: size.height * 0.018,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -469,8 +437,6 @@ if (createRusult == 'ok') {
         decoration: BoxDecoration(
           color: isDarkMode ? Colors.black : const Color(0xffF7F8F8),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
-          
-          
         ),
         child: Padding(
           padding: const EdgeInsets.all(9.0),
@@ -494,27 +460,26 @@ if (createRusult == 'ok') {
                   color: Color(0xffADA4A5),
                 ),
                 focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Pallete.green,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            enabledBorder:OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Pallete.borderColor,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
+                  borderSide: const BorderSide(
+                    color: Pallete.green,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Pallete.borderColor,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 border: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Pallete.green,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(10),
-              
-            ),
+                  borderSide: const BorderSide(
+                    color: Pallete.green,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 contentPadding: EdgeInsets.only(
                   top: size.height * 0.012,
                 ),

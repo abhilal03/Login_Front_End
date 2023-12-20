@@ -1,76 +1,90 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tourism/model/app_user.dart';
+import 'dart:convert';
+import 'dart:html';
 
-class UserController {
-  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:tourism/pages/home.dart';
+import 'package:tourism/pages/login_page.dart';
+import 'package:tourism/widgets/custom_alerts.dart';
 
- 
-
-  static final CollectionReference<AppUser> _usersRef =
-      _firestore.collection('user').withConverter<AppUser>(
-            fromFirestore: (snapshot, _) =>
-                AppUser.myFromJsonFuntion(snapshot.data()!),
-            toFirestore: (users, _) => users.myToJson(),
-          );
-
-  // static Future<AppUser?> getUserDetails(String uid) async {
-  //   try {
-  //     return await _usersRef
-  //         .doc(uid)
-  //         .get()
-  //         .then((value) => value.exists ? value.data() : null);
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
-
-
- static createUser(AppUser users) async{
-  try {
-    await _usersRef.doc(users.uid).set(users);
-    return 'Done';
-  } catch (e) {
-    
+class UserProvider extends ChangeNotifier {
+  String baseUrl = "http://10.11.3.85:3000/";
+  bool isUserRegistering = false;
+  Future<void> userRegistration(
+      {required String email,
+      required String password,
+      required String name,
+      required String lastName,
+      required BuildContext context}) async {
+    Map<String, dynamic> data = {
+      'email': email,
+      'name': name,
+      'ulastName': lastName,
+      'password': password
+    };
+    try {
+      isUserRegistering = true;
+      notifyListeners();
+      final response = await http.post(
+        Uri.parse(baseUrl + "signup"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(data),
+      );
+      if (response.statusCode == 200) {
+        CustomAlert.successMessage("User created successfully", context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+        );
+      } else {
+        Map<String, dynamic> result = jsonDecode(response.body);
+        CustomAlert.warningMessage(result['message'], context);
+      }
+    } catch (e) {
+      print('error occured $e');
+    } finally {
+      isUserRegistering = false;
+      notifyListeners();
+    }
   }
- }
-  //int sum( int a, int b)
 
-  // static updateUser(String uid, name, address, phonenumber) async {
-  //   try {
-  //     await _usersRef.doc(uid).update({
-  //       'name': name,
-  //       'address': address,
-  //       'phonenumber': phonenumber,
-  //     });
-  //     return 'ok';
-  //   } catch (e) {
-  //     return 'error';
-  //   }
-  // }
+  bool isUserLogining = false;
 
- 
-
- 
-
- 
-
-  
-
- 
-
-  
-
-  // static Future<List<AppUser?>?> getAllUsers() async {
-  //   try {
-  //     return await _usersRef
-  //         .get()
-  //         .then((value) => value.docs.map((e) => e.data()).toList());
-  //   } catch (e) {
-  //     print(e);
-  //     return null;
-  //   }
-  // }
-
- 
+  Future<void> login(
+      {required String email,
+      required String password,
+      required BuildContext context}) async {
+    Map<String, dynamic> data = {'email': email, 'password': password};
+    try {
+      isUserLogining = true;
+      notifyListeners();
+      final response = await http.post(
+        Uri.parse(baseUrl + "signin"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(data),
+      );
+      if (response.statusCode == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
+      } else {
+        Map<String,dynamic> result=jsonDecode(response.body);
+        CustomAlert.errorMessage(result['message'], context);
+      }
+    } catch (e) {
+      print('error occured $e');
+    } finally {
+      isUserRegistering = false;
+      notifyListeners();
+    }
+  }
 }

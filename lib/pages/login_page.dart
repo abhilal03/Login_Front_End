@@ -1,5 +1,7 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:tourism/controller/auth_controller.dart';
+import 'package:provider/provider.dart';
+import 'package:tourism/controller/user_controller.dart';
 import 'package:tourism/pages/forgot_password_page.dart';
 import 'package:tourism/pages/home.dart';
 import 'package:tourism/pages/register_page.dart';
@@ -8,6 +10,7 @@ import 'package:tourism/widgets/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tourism/pallete.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -23,10 +26,15 @@ class _LoginPageState extends State<LoginPage> {
     "", //password
   ];
 
-
   final _emailKey = GlobalKey<FormState>();
   final _passwordKey = GlobalKey<FormState>();
-  
+  late final TextEditingController _emailController, _passwordController;
+  @override
+  void initState() {
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,135 +55,116 @@ class _LoginPageState extends State<LoginPage> {
                 SingleChildScrollView(
                   child: Column(
                     children: [
-                      
-                       Image.asset('assets/images/logo.png',width: 200,height: 100,),
-                       
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Sign',
-                              style: GoogleFonts.poppins(
-                                color: isDarkMode ? Colors.white : Colors.black,
-                                fontSize: size.height * 0.06,
-                                fontWeight: FontWeight.bold,
-                              ),
+                      Image.asset(
+                        'assets/images/logo.png',
+                        width: 200,
+                        height: 100,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Sign',
+                            style: GoogleFonts.poppins(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                              fontSize: size.height * 0.06,
+                              fontWeight: FontWeight.bold,
                             ),
-                            Text(
-                              ' in',
-                              style: GoogleFonts.poppins(
-                                color: Pallete.green,
-                                fontSize: size.height * 0.06,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          ),
+                          Text(
+                            ' in',
+                            style: GoogleFonts.poppins(
+                              color: Pallete.green,
+                              fontSize: size.height * 0.06,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-                       
-                          
+                          ),
+                        ],
+                      ),
                       Padding(
                         padding: EdgeInsets.only(top: size.height * 0.015),
                         child: Align(
-                          child:  Text(
-                                  ' ',
-                                  style: GoogleFonts.poppins(
-                                    color: isDarkMode
-                                        ? Colors.white
-                                        : const Color(0xff1D1617),
-                                    fontSize: size.height * 0.025,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              
-                        ),
-                      ),
-                      
-                      Form(
-                        child: buildTextField(
-                          "Email",
-                          Icons.email_outlined,
-                          false,
-                          size,
-                          (valuemail) {
-                            if (valuemail.length < 5) {
-                              buildSnackError(
-                                'Invalid email',
-                                context,
-                                size,
-                              );
-                              return '';
-                            }
-                            if (!RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+.[a-zA-Z]+")
-                                .hasMatch(valuemail)) {
-                              buildSnackError(
-                                'Invalid email',
-                                context,
-                                size,
-                              );
-                              return '';
-                            }
-                            return null;
-                          },
-                          _emailKey,
-                          2,
-                          isDarkMode,
+                          child: Text(
+                            ' ',
+                            style: GoogleFonts.poppins(
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : const Color(0xff1D1617),
+                              fontSize: size.height * 0.025,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                       Form(
                         child: buildTextField(
-                          "Passsword",
-                          Icons.lock_outline,
-                          true,
-                          size,
-                          (valuepassword) {
-                            if (valuepassword.length < 6) {
-                              buildSnackError(
-                                'Invalid password',
-                                context,
-                                size,
-                              );
-                              return '';
-                            }
-                            return null;
-                          },
-                          _passwordKey,
-                          3,
-                          isDarkMode,
-                        ),
+                            "Email", Icons.email_outlined, false, size,
+                            (valuemail) {
+                          if (valuemail.length < 5) {
+                            buildSnackError(
+                              'Invalid email',
+                              context,
+                              size,
+                            );
+                            return '';
+                          }
+                          if (!RegExp(
+                                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+.[a-zA-Z]+")
+                              .hasMatch(valuemail)) {
+                            buildSnackError(
+                              'Invalid email',
+                              context,
+                              size,
+                            );
+                            return '';
+                          }
+                          return null;
+                        }, _emailKey, 2, isDarkMode, _emailController),
                       ),
-                      
+                      Form(
+                        child: buildTextField(
+                            "Passsword", Icons.lock_outline, true, size,
+                            (valuepassword) {
+                          if (valuepassword.length < 6) {
+                            buildSnackError(
+                              'Invalid password',
+                              context,
+                              size,
+                            );
+                            return '';
+                          }
+                          return null;
+                        }, _passwordKey, 3, isDarkMode, _passwordController),
+                      ),
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.015,
-                          vertical: size.height * 0.025,
-                        ),
-                        child:  InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ForgotPasswordPage(),),
-                                  );
-                                },
-                                child: Text(
-                                  "Forgot your password?",
-                                  style: TextStyle(
-                                    color: const Color.fromARGB(255, 143, 134, 135),
-                                    decoration: TextDecoration.underline,
-                                    fontSize: size.height * 0.02,
-                                  ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: size.width * 0.015,
+                            vertical: size.height * 0.025,
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ForgotPasswordPage(),
                                 ),
-                              )
-                              
-                            
-                      ),
+                              );
+                            },
+                            child: Text(
+                              "Forgot your password?",
+                              style: TextStyle(
+                                color: const Color.fromARGB(255, 143, 134, 135),
+                                decoration: TextDecoration.underline,
+                                fontSize: size.height * 0.02,
+                              ),
+                            ),
+                          )),
                       AnimatedPadding(
                         duration: const Duration(milliseconds: 500),
                         padding: EdgeInsets.only(top: size.height * 0.025),
                         child: ButtonWidget(
-                          text:  "Login" ,
+                          text: "Login",
                           backColor: isDarkMode
                               ? [
                                   Colors.black,
@@ -187,26 +176,30 @@ class _LoginPageState extends State<LoginPage> {
                             Colors.white,
                           ],
                           onPressed: () async {
-                            if (register) { //validation for login
+                            if (register) {
+                              //validation for login
                               if (_emailKey.currentState!.validate()) {
                                 if (_passwordKey.currentState!.validate()) {
-                            
-                                   Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const HomePage(),),
-                                  );
+                                  Provider.of<UserProvider>(context,
+                                          listen: false)
+                                      .login(
+                                          context: context,
+                                          email: _emailController.text,
+                                          password: _passwordController.text);
+                                  //  Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //       builder: (context) =>
+                                  //           const HomePage(),),
+                                  // );
                                   print('login');
                                 }
                               }
                               //validation for register
-                              
-                            } 
+                            }
                           },
                         ),
                       ),
-                     
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: RichText(
@@ -214,7 +207,7 @@ class _LoginPageState extends State<LoginPage> {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text:  "Don’t have an account yet? ",
+                                text: "Don’t have an account yet? ",
                                 style: TextStyle(
                                   color: isDarkMode
                                       ? Colors.white
@@ -226,29 +219,30 @@ class _LoginPageState extends State<LoginPage> {
                                 child: InkWell(
                                   onTap: () => setState(() {
                                     Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                       builder: (context) =>
-                                          const RegisterPage(),),);
-                                          
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const RegisterPage(),
+                                      ),
+                                    );
                                   }),
-                                  child:  Text(
-                                          "Register",
-                                          style: TextStyle(
-                                            foreground: Paint()
-                                              ..shader = const LinearGradient(
-                                                colors: <Color>[
-                                                  Color(0xffEEA4CE),
-                                                  Color(0xffC58BF2),
-                                                ],
-                                              ).createShader(
-                                                const Rect.fromLTWH(
-                                                    0.0, 0.0, 200.0, 70.0),
-                                              ),
-                                            // color: const Color(0xffC58BF2),
-                                            fontSize: size.height * 0.018,
-                                          ),
+                                  child: Text(
+                                    "Register",
+                                    style: TextStyle(
+                                      foreground: Paint()
+                                        ..shader = const LinearGradient(
+                                          colors: <Color>[
+                                            Color(0xffEEA4CE),
+                                            Color(0xffC58BF2),
+                                          ],
+                                        ).createShader(
+                                          const Rect.fromLTWH(
+                                              0.0, 0.0, 200.0, 70.0),
                                         ),
+                                      // color: const Color(0xffC58BF2),
+                                      fontSize: size.height * 0.018,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -276,6 +270,7 @@ class _LoginPageState extends State<LoginPage> {
     Key key,
     int stringToEdit,
     bool isDarkMode,
+    TextEditingController controller,
   ) {
     return Padding(
       padding: EdgeInsets.only(top: size.height * 0.025),
@@ -285,14 +280,13 @@ class _LoginPageState extends State<LoginPage> {
         decoration: BoxDecoration(
           color: isDarkMode ? Colors.black : const Color(0xffF7F8F8),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
-          
-          
         ),
         child: Padding(
           padding: const EdgeInsets.all(9.0),
           child: Form(
             key: key,
             child: TextFormField(
+              controller: controller,
               style: TextStyle(
                   color: isDarkMode ? const Color(0xffADA4A5) : Colors.black),
               onChanged: (value) {
@@ -309,27 +303,26 @@ class _LoginPageState extends State<LoginPage> {
                   color: Color(0xffADA4A5),
                 ),
                 focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Pallete.green,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            enabledBorder:OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Pallete.borderColor,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
+                  borderSide: const BorderSide(
+                    color: Pallete.green,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Pallete.borderColor,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 border: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Pallete.green,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(10),
-              
-            ),
+                  borderSide: const BorderSide(
+                    color: Pallete.green,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 contentPadding: EdgeInsets.only(
                   top: size.height * 0.012,
                 ),
