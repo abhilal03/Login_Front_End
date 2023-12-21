@@ -4,7 +4,7 @@
     package="com.example.geocoding_android">
 
    <application
-        android:label="login_ui"
+        android:label="Tourism"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

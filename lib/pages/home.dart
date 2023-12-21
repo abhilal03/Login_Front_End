@@ -7,28 +7,7 @@ import 'package:tourism/pallete.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
-  List<Step> stepList() => [
-        const Step(
-            title: Text('Kochi'),
-            content: Center(
-              child: Text('9.00 AM'),
-            )),
-        const Step(
-            title: Text('Munnar'),
-            content: Center(
-              child: Text('1.00 PM'),
-            )),
-        const Step(
-            title: Text('Kottayam'),
-            content: Center(
-              child: Text('8.00 PM'),
-            )),
-        const Step(
-            title: Text('Vagamon'),
-            content: Center(
-              child: Text('9.00 PM'),
-            )),
-      ];
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
