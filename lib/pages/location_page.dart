@@ -8,10 +8,10 @@ class LocationPage extends StatefulWidget {
   const LocationPage({Key? key}) : super(key: key);
 
   @override
-  State<LocationPage> createState() => _LocationWidgetState();
+  State<LocationPage> createState() => _LocationPageState();
 }
 
-class _LocationWidgetState extends State<LocationPage> {
+class _LocationPageState extends State<LocationPage> {
   String? _currentAddress;
   Position? _currentPosition;
   Timer? _locationTimer;
@@ -50,17 +50,28 @@ class _LocationWidgetState extends State<LocationPage> {
 
     if (!hasPermission) return;
 
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) {
-      setState(() => _currentPosition = position);
-      _getAddressFromLatLng(_currentPosition!);
-      _sendLocationToServer(_currentPosition!, _currentAddress);
-      // Start the timer to get location updates every 5 seconds
-      _locationTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
-        _getCurrentPosition();
-      });
-    }).catchError((e) {
-      debugPrint(e);
+    // Force a location update by disabling and enabling location services
+    await Geolocator.isLocationServiceEnabled().then((bool isEnabled) async {
+      if (isEnabled) {
+        // Enable location services
+        await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        ).then((Position position) {
+          setState(() => _currentPosition = position);
+          _getAddressFromLatLng(_currentPosition!);
+          _sendLocationToServer(_currentPosition!, _currentAddress);
+        }).catchError((e) {
+          debugPrint(e);
+        });
+      } else {
+        // Location services are disabled, prompt the user to enable them
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services'),
+        ));
+        // You can open the device settings to allow the user to enable location services
+        // Alternatively, you can use Geolocator.openAppSettings();
+      }
     });
   }
 
@@ -96,6 +107,13 @@ class _LocationWidgetState extends State<LocationPage> {
     }
   }
 
+  void _startLocationUpdates() {
+    // Start the timer to get location updates every 10 seconds
+    _locationTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      _getCurrentPosition();
+    });
+  }
+
   void _stopLocationUpdates() {
     // Stop the location updates when the "Stop" button is pressed
     if (_locationTimer != null) {
@@ -103,6 +121,13 @@ class _LocationWidgetState extends State<LocationPage> {
       _locationTimer = null;
       print("stop");
     }
+  }
+
+  @override
+  void dispose() {
+    // Cancel the timer when the widget is disposed
+    _locationTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -117,16 +142,16 @@ class _LocationWidgetState extends State<LocationPage> {
               const SizedBox(height: 15),
               Text('Longitude: ${_currentPosition?.longitude ?? ""}'),
               const SizedBox(height: 15),
-              Text('ADDRESS: ${_currentAddress ?? ""}'),
+              Text('Address: ${_currentAddress ?? ""}'),
               const SizedBox(height: 32),
               ElevatedButton(
-                onPressed: _getCurrentPosition,
+                onPressed: _startLocationUpdates,
                 child: const Text("Get Current Location"),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _stopLocationUpdates,
-                child: const Text("Stop"),
+                child: const Text("Stop Updation"),
               ),
             ],
           ),

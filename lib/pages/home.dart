@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tourism/pages/location_page.dart';
 import 'package:tourism/pages/map.dart';
-// import 'package:tourism/pages/map.dart';
 import 'package:tourism/pages/status.dart';
 import 'package:tourism/pallete.dart';
 
@@ -17,6 +16,8 @@ class HomePage extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: Pallete.green,
             title: const Text("Tourism"),
+            titleTextStyle:
+                const TextStyle(color: Pallete.whiteColor, fontSize: 20),
           ),
           bottomNavigationBar: menu(),
           body: const TabBarView(
