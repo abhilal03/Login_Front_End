@@ -1,11 +1,9 @@
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:tourism/controller/auth_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:tourism/controller/user_controller.dart';
 import 'package:tourism/pages/forgot_password_page.dart';
 import 'package:tourism/pages/home.dart';
+import 'package:tourism/pages/popup_screen.dart';
 import 'package:tourism/pages/register_page.dart';
-// import 'package:tourism/pages/status.dart';
 import 'package:tourism/widgets/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,6 +17,27 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool isLoggedIn = false;
+
+  void _login() {
+    setState(() {
+      isLoggedIn = true;
+    });
+
+    _showPopup();
+  }
+
+  void _showPopup() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) {
+          return const PopupContent();
+        },
+      ),
+    );
+  }
+
   bool checkedValue = false;
   bool register = true;
   List textfieldsStrings = [
@@ -186,12 +205,13 @@ class _LoginPageState extends State<LoginPage> {
                                           context: context,
                                           email: _emailController.text,
                                           password: _passwordController.text);
-                                   Navigator.push(
+                                  Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            const HomePage(),),
+                                      builder: (context) => const HomePage(),
+                                    ),
                                   );
+                                  _login();
                                   print('login');
                                 }
                               }

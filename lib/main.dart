@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:tourism/controller/user_controller.dart';
 import 'package:tourism/pages/login_page.dart';
 
-
 void main() async {
   runApp(
     MultiProvider(
