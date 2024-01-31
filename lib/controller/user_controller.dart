@@ -75,8 +75,9 @@ class UserProvider extends ChangeNotifier {
           ),
         );
       } else {
-        Map<String,dynamic> result=jsonDecode(response.body);
-        CustomAlert.errorMessage(result['message'], context);
+        CustomAlert.errorMessage("Invalid Username or password", context);
+        //Map<String, dynamic> result = jsonDecode(response.body);
+        //CustomAlert.errorMessage(result['sdcfdsmessage'], context);
       }
     } catch (e) {
       print('error occured $e');

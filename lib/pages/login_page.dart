@@ -1,7 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:tourism/controller/user_controller.dart';
 import 'package:tourism/pages/forgot_password_page.dart';
-import 'package:tourism/pages/home.dart';
 import 'package:tourism/pages/popup_screen.dart';
 import 'package:tourism/pages/register_page.dart';
 import 'package:tourism/widgets/button_widget.dart';
@@ -205,14 +204,15 @@ class _LoginPageState extends State<LoginPage> {
                                           context: context,
                                           email: _emailController.text,
                                           password: _passwordController.text);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const HomePage(),
-                                    ),
-                                  );
-                                  _login();
-                                  print('login');
+
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => const HomePage(),
+                                  //   ),
+                                  // );
+                                  //_login();
+                                  // print('login');
                                 }
                               }
                               //validation for register
