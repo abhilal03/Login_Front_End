@@ -4,8 +4,36 @@ import 'package:tourism/pages/map.dart';
 import 'package:tourism/pages/status.dart';
 import 'package:tourism/pallete.dart';
 
-class HomePage extends StatelessWidget {
+import 'popup_screen.dart';
+
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool isLoggedIn = false;
+
+  void _login() {
+    setState(() {
+      isLoggedIn = true;
+    });
+
+    _showPopup();
+  }
+
+  void _showPopup() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) {
+          return const PopupContent();
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +41,15 @@ class HomePage extends StatelessWidget {
       home: DefaultTabController(
         length: 4,
         child: Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              _login();
+            },
+            foregroundColor: Pallete.whiteColor,
+            backgroundColor: Pallete.green,
+            shape: const CircleBorder(),
+            child: const Icon(Icons.schedule_send),
+          ),
           appBar: AppBar(
             backgroundColor: Pallete.green,
             title: const Text("Tourism"),
