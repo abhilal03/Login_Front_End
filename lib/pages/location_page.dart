@@ -90,7 +90,8 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   Future<void> _sendLocationToServer(Position position, String? address) async {
-    String baseUrl = "http://10.11.2.184:3000/";
+    //String baseUrl = "http://10.11.2.184:3000/";
+    String baseUrl = "http://10.11.2.236:4000/";
     final response = await http.post(
       Uri.parse(baseUrl + "location"),
       body: {

@@ -6,7 +6,8 @@ import 'package:tourism/pages/login_page.dart';
 import 'package:tourism/widgets/custom_alerts.dart';
 
 class UserProvider extends ChangeNotifier {
-  String baseUrl = "http://10.11.2.184:3000/";
+  // String baseUrl = "http://10.11.2.184:3000/";
+  String baseUrl = "http://10.11.2.236:4000/";
   bool isUserRegistering = false;
   Future<void> userRegistration(
       {required String email,
